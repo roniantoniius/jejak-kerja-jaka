@@ -5,7 +5,7 @@ Kategori: #java  #code
 
 ---
 # Overall Plan
-1. **Bab 1**: System Design
+1. **Bab 1**: System Design 
 	- Analisis Domain
 	- personalisasi user
 	- ui design
@@ -150,7 +150,62 @@ note:
 
 ---
 
+# Bab 2: Design REST API
+
+### Server Flow
+1. Authentication using Keycloak
+
+### Organizer flow
+1. **Create Event**
+	- POST Endpoint: '/api/v1/events'
+	- Request Body: Event java object
+2. **Get tiket data for dashboard atau report penjualan tiket**
+3. **Daftar Event**
+	- GET Endpoint: '/api/v1/events'
+4. **Get Event by id**
+	- GET Endpoint: '/api/v1/events/{event_id}'
+5. **Update Event**
+	- PUT Endpoint: '/api/v1/events/{event_id}'
+	- Request Body: Event
+6. **Delete Event**
+	- DELETE Endpoint: '/api/v1/events/{event_id}'
+7. **Get Daftar Tiket Penjualan Berdasarkan Event**
+	- GET Endpoint: '/api/v1/events/{event_id}/tikets'
+8. **Partial Update Penjualan Tiket Untuk Batalin**: 
+	- PARTIAL Endpoint: '/api/v1/events/{event_id}/tikets/tiket/{tiket_id}'
+	- Menggunakan Partial Tiket Objek
+9. **Get Penjualan Tiket By Id**
+	- GET Endpoint: '/api/v1/events/{event_id}/tikets/{tiket_id}'
+10. **Get Daftar Tipe Tiket**
+	- GET Endpoint: '/api/v1/events/{event_id}/tikets/tipe-tikets'
+11. **Get Daftar Tipe Tiket Berdasarkan Id**
+	- GET Endpoint: '/api/v1/events/{event_id}/tikets/tipe-tikets/{tipe_tiket_id}'
+12. **Partial Update Tipe Tiket**
+	- PARTIAL Endpoint: '/api/v1/events/{event_id}/tikets/tipe-tikets/{tipe_tiket_id}'
+	- Request Body: Partial TipeTiket
+13. **Delete Tipe Tiket**
+	- Delete Endpoint: '/api/v1/events/{event_id}/tikets/tipe-tikets/{tipe_tiket_id}'
+14. 
 
 
-
-
+### Hadirin Flow
+1. **Search Event Terpublish**
+	- GET Endpoint: '/api/v1/event-terpublish'
+2. **Get Event Terpublish berdasarkan id**
+	- GET Endpoint: '/api/v1/event-terpublish/{event_terpublish_id}'
+3. **Post Beli Tiket**
+	- POST Endpoint : '/api/v1/event-terpublish/{event_terpublish_id}/tipe-tikets/{tipe_tiket_id}'
+4. **Daftar Tiket untuk Hadirin**
+	- GET Endpoint: '/api/v1/tikets'
+5. **Get Tiket untuk Hadirin berdasarkan id**
+	- GET Endpoint: '/api/v1/tikets/{tiket_id}'
+6. **Get Tiket QR Code untuk hadirin**
+	- GET Endpoint: /api/v1/tikets/{tiket_id}/qr-code
+7. dd
+### Panitia Flow
+1. **Get List of Events** (endpoint same as the Organizer flow)
+2. **Validasi Tiket**
+	- POST Endpoint: '/api/v1/events/{event_id}/tikets/tiket_validasi'
+3. **mengambil Daftar Validasi Tiket**
+	- GET Endpoint: '/api/v1/events/{event_id}/tikets/tiket_validasi'
+4. 
