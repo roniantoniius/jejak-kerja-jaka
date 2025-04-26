@@ -185,7 +185,7 @@ note:
 	- Request Body: Partial TipeTiket
 13. **Delete Tipe Tiket**
 	- Delete Endpoint: '/api/v1/events/{event_id}/tikets/tipe-tikets/{tipe_tiket_id}'
-14. 
+14. d
 
 
 ### Hadirin Flow
@@ -201,11 +201,91 @@ note:
 	- GET Endpoint: '/api/v1/tikets/{tiket_id}'
 6. **Get Tiket QR Code untuk hadirin**
 	- GET Endpoint: /api/v1/tikets/{tiket_id}/qr-code
-7. dd
 ### Panitia Flow
 1. **Get List of Events** (endpoint same as the Organizer flow)
 2. **Validasi Tiket**
 	- POST Endpoint: '/api/v1/events/{event_id}/tikets/tiket_validasi'
 3. **mengambil Daftar Validasi Tiket**
 	- GET Endpoint: '/api/v1/events/{event_id}/tikets/tiket_validasi'
-4. 
+
+---
+# Bab 3: Project Setup
+
+## ToDo
+- [x] membuat arsitektur projek
+- [x] membuat spring boot baru
+- [x] pakai postgre
+- [x] pakai keycloak buat OAuth2
+- [ ] pakai MapStruct untuk streamline object mapping atau bantu dalam Mapper
+
+## Projek Arsitektur
+1. Front End: React
+2. Back End: Spring Boot 3
+3. Db: PostgreSQL cuz support fuzzy search capabilites
+4. Authorization Server: Keycloak through Docker
+
+
+## Using Postgre
+You can set the db in pgadmin to be ready and configure in `application.properties` like this:
+```java
+spring.datasource.url=jdbc:postgresql://localhost:5432/bacasekarang
+spring.datasource.username=postgres
+spring.datasource.password=###
+spring.datasource.platform=postgres
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# JPA Konfigurasi
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+```
+
+## Keycloak for Auth server
+For handling authentication untuk membuat initial realm untuk client dan user dengan konfigurasi yang dibutuhkan.
+
+```yaml
+services:  
+  keycloak:  
+    image: quay.io/keycloak/keycloak:latest  
+    ports:  
+      - "9090:8080"  
+    environment:  
+      KEYCLOAK_ADMIN: admin  
+      KEYCLOAK_ADMIN_PASSWORD: admin  
+    volumes: # kalau pakai ini datanya ga hilang walaupun project spring direstart  
+      - keycloak-data:/opt/keycloak/data  
+    command:  
+      - start-dev  
+      - --db=dev-file  
+          
+volumes:  
+  keycloak-data:  
+    driver: local
+```
+
+run `docker-compose up`. About 1 GB
+
+### Set up key cloak `Realm`
+1. Masuk ke http:localhost:9090 dan sign dengan admin, admin
+2. Buat realm (), masuk ke Manage Realms > Create Realms
+3. Masukan nama realm seperti *kerja-tiket-app*
+	- Realm adalah tempat terisolasi yang manages kumpulan users, credentioal, roles, dan group. Jadi satu user itu milik dan telah terdaftar dalam suatu realm. Jadi realm itu hanya bisa manage user yang ada didalamnya
+- Buat Client, masuk ke Clients > Create client
+- Masukkan `Client ID` seperti *kerja-tiket-app-client* sama juga untuk `Name` > Next
+- unable the `client authentication` dan `authorization`, dan enable `Standard Flow` > Next
+- masukkan `Home-URL` seperti 'http://localhost:5173' dan juga sama `Valid redirect URLs` begitupun `Valid post logout` dan siasnya empty > Save
+- Buat User, masuk ke User > Create User
+- untuk field `Username` masukkan contoh nama aktor `organizer`
+- field `email` bebas, `first name` = user > Create
+- Masuk ke user itu dan ke Credential
+- Set password dengan isi bebas dulu aja dan unable `Temporary`
+- Simpan setipa nama
+- set di `.properties`
+```yaml
+  
+spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:9090/realms/kerja-tiket-app
+```
+
+## Mapstruct
+1. Pada `application.properties` setting si versi dari mapstruct dan lombok
